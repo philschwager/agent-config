@@ -1,0 +1,34 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "description": "Up-to-date library documentation"
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "description": "GitHub repository management, PRs, issues"
+    },
+    "backstage": {
+      "command": "npx",
+      "args": [
+        "-y", "mcp-remote",
+        "https://backstage.local-prd.cloud/api/mcp-actions/v1/sse",
+        "--header", "Authorization: Bearer ${BACKSTAGE_MCP_TOKEN}",
+        "--transport", "sse-only"
+      ]
+    },
+    "figma": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp"
+    },
+    "figma-desktop": {
+      "type": "http",
+      "url": "http://127.0.0.1:3845/mcp"
+    }
+  }
+}
