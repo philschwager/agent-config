@@ -13,22 +13,19 @@
       },
       "description": "GitHub repository management, PRs, issues"
     },
-    "backstage": {
-      "command": "npx",
+    "shelly-api-docs": {
+      "type": "url",
+      "url": "https://shelly-api-docs.mcp.shelly.link/mcp"
+    },
+    "shelly-docker-custom": {
+      "command": "docker",
       "args": [
-        "-y", "mcp-remote",
-        "https://backstage.local-prd.cloud/api/mcp-actions/v1/sse",
-        "--header", "Authorization: Bearer ${BACKSTAGE_MCP_TOKEN}",
-        "--transport", "sse-only"
+        "run",
+        "-i",
+        "--rm",
+        "-e", "SHELLY_API_KEY=YOUR_SHELLY_CLOUD_API_KEY",
+        "mslavov/shelly-mcp:latest"
       ]
-    },
-    "figma": {
-      "type": "http",
-      "url": "https://mcp.figma.com/mcp"
-    },
-    "figma-desktop": {
-      "type": "http",
-      "url": "http://127.0.0.1:3845/mcp"
     }
   }
 }
