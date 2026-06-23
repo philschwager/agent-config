@@ -26,6 +26,15 @@
         "-e", "SHELLY_API_KEY=${SHELLY_API_KEY}",
         "mslavov/shelly-mcp:latest"
       ]
+    },
+    "home-assistant": {
+      "command": "/Users/phschw/.local/bin/uvx",
+      "args": ["--python", "3.13", "ha-mcp@latest"],
+      "env": {
+        "HOMEASSISTANT_URL": "http://192.168.11.117:8123",
+        "HOMEASSISTANT_TOKEN": "${HASS_TOKEN}"
+      },
+      "description": "Home Assistant control, automations, dashboards (ha-mcp)"
     }
   }
 }
