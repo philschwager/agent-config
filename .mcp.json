@@ -23,7 +23,7 @@
         "run",
         "-i",
         "--rm",
-        "-e", "SHELLY_API_KEY=YOUR_SHELLY_CLOUD_API_KEY",
+        "-e", "SHELLY_API_KEY=${SHELLY_API_KEY}",
         "mslavov/shelly-mcp:latest"
       ]
     }
