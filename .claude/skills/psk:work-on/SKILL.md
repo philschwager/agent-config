@@ -1,7 +1,7 @@
 ---
 name: psk:work-on
-description: Work on a task from tasks.md. Use when the user says "work on <task>", "continue <task>", "resume <task>", "close <task>", "reopen <task>", "add <file> to <task>" or "task status". Keeps a per-task memory folder in memory/ (memory.md plus a docs/ folder for external documents), works in a separate context by default, and archives the folder when the task is closed.
-argument-hint: "<task> | close <task> | reopen <task> | add <file|url> to <task> | status  (add 'here' to work in the current context)"
+description: Work on a task from tasks.md. Use when the user says "work on <task>", "continue <task>", "resume <task>", "close <task>", "reopen <task>", "add <file> to <task>", "task status" or wants to set up a new tasks folder ("init tasks", "initialize a task folder"). Keeps a per-task memory folder in memory/ (memory.md plus a docs/ folder for external documents), works in a separate context by default, and archives the folder when the task is closed.
+argument-hint: "<task> | close <task> | reopen <task> | add <file|url> to <task> | status | init [folder]  (add 'here' to work in the current context)"
 ---
 
 # Work On a Task
@@ -23,6 +23,7 @@ command. Everything in `docs/` is input for the task and must be read when the
 task is worked on.
 
 All paths below are relative to this folder (the one containing `tasks.md`).
+The only exception is **init**, which creates such a folder from scratch.
 Today's date is in the system prompt. Use it for every date you write.
 
 ## Who runs this
@@ -44,6 +45,11 @@ Decide the command from the user's words:
 | **reopen** | `reopen X` | Reopen procedure |
 | **add** | `add <file> to X`, `attach <file> to X`, `put this in X` | Add document |
 | **status** | `/psk:work-on status`, `task status`, `what am I working on` | Status |
+| **init** | `/psk:work-on init [folder]`, `init tasks`, `set up a (new) tasks folder`, `initialize tasks in <folder>` | Init |
+
+If there is no `tasks.md` in the current folder and the user did not ask for
+**init**, do not run any other command. Say that this folder is not a tasks
+folder and offer **init**.
 
 Context modifiers (only for **work**):
 
@@ -268,6 +274,59 @@ asked for the task to be closed.
 3. In `tasks.md`: change `[x]` to `[ ]`, remove the ` — closed …` suffix, move
    the line back to `## To Do`.
 4. Continue with **work** if the user asked to work on it; otherwise confirm.
+
+## Init
+
+Creates a new tasks folder with everything the other commands expect.
+
+1. **Target folder:** the folder the user named (relative to the current
+   folder, or absolute). No folder named: the current folder. Create it if it
+   does not exist:
+   ```bash
+   mkdir -p <folder>/memory/archive
+   ```
+2. **Files.** Create each one with the Write tool, but only if it does not
+   exist yet. Never overwrite; an existing `tasks.md` or `memory/` is kept as is
+   and reported as "already there".
+
+   `tasks.md`:
+   ```markdown
+   # Open Tasks
+
+   ## To Do
+
+   ## Done
+   ```
+
+   `memory/.gitkeep` and `memory/archive/.gitkeep`: empty files, so the
+   folders survive in git while they are empty.
+
+   `README.md`:
+   ```markdown
+   # Tasks
+
+   Task list and per-task memory, managed by the psk:work-on skill.
+
+   - `tasks.md`: the task list. One line per task under `## To Do`, moved to
+     `## Done` when closed.
+   - `memory/<slug>/memory.md`: goal, context, progress log and open questions
+     of a task that is being worked on.
+   - `memory/<slug>/docs/`: external documents for that task (mails, PDFs,
+     exports, notes). Drop files here by hand or with `add <file> to <task>`;
+     they are read on the next run.
+   - `memory/archive/<slug>/`: closed tasks.
+
+   Commands: `work on <task>`, `close <task>`, `reopen <task>`,
+   `add <file|url> to <task>`, `task status`. Add `here` to work in the
+   current context instead of a subagent.
+   ```
+3. **Tasks given on init.** If the user listed tasks in the same request
+   (`init tasks: A, B, C`), append `- [ ] <task> — added <today>` for each
+   under `## To Do`.
+4. **Confirm:** the folder path, the files created, the files that already
+   existed, and that the user can now say `work on <task>` from inside that
+   folder. If the folder is not the current folder, say that the skill works on
+   the `tasks.md` of the folder Claude is started in.
 
 ## Status
 
